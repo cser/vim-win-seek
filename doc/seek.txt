@@ -1,0 +1,36 @@
+*seek.txt*
+
+1. Description
+2. Installation
+3. Usage
+4. Version History
+============================================================
+
+DESCRIPTION
+
+Seaching in files for Windows
+============================================================
+
+USAGE
+
+Search for pattern:
+	:Seek pattern
+Search for pattern with file filter:
+	:Seek pattern *.txt
+Setup default pattern:
+	let g:seek_filter = '*.txt'
+Making shortcut:
+	map <A-f> :Seek<Space>
+============================================================
+
+INSTALLATION
+
+Just use Vundle. Needs Microsoft.NET 2.0
+============================================================
+
+VERSION HISTORY
+
+1.0
+* First version
+============================================================
+vim:ft=help:tw=78:
