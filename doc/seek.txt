@@ -17,7 +17,15 @@ Search for pattern:
 	:Seek pattern
 Search for pattern with file filter:
 	:Seek pattern *.txt
-Setup default pattern:
+
+If need regex options, pattern mast be enclosed in / / pair
+For example: /pattern/ie
+Allowed regex options:
+	i - ignore case;
+	s - single line, ^ - is start of file, $ - end of file;
+	e - explicit capture
+
+Setup default files filter:
 	let g:seek_filter = '*.txt'
 Making shortcut:
 	map <A-f> :Seek<Space>

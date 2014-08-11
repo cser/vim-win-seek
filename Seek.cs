@@ -10,8 +10,7 @@ public class Seek
 		string directory = null;
 		string regexText = null;
 		string filter = null;
-		int i = 0;
-		while (true)
+		for (int i = 0; true;)
 		{
 			string arg = GetArg(args, i++);
 			if (arg == null)
@@ -54,9 +53,33 @@ public class Seek
 			return;
 		}
 		Regex regex = null;
+		string rawRegex = regexText;
+		RegexOptions options = RegexOptions.CultureInvariant | RegexOptions.Multiline;
+		if (regexText.StartsWith("/") && regexText.LastIndexOf("/") > 1)
+		{
+			int lastIndex = regexText.LastIndexOf("/");
+			string optionsText = regexText.Substring(lastIndex + 1);
+			rawRegex = regexText.Substring(1, lastIndex - 1);
+			for (int i = 0; i < optionsText.Length; i++)
+			{
+				char c = optionsText[i];
+				if (c == 'i')
+					options |= RegexOptions.IgnoreCase;
+				else if (c == 's')
+					options &= ~RegexOptions.Multiline;
+				else if (c == 'e')
+					options |= RegexOptions.ExplicitCapture;
+				else
+				{
+					Console.Error.WriteLine("Unsupported regex option: " + c);
+					LogHelp();
+					return;
+				}
+			}
+		}
 		try
 		{
-			regex = new Regex(regexText);
+			regex = new Regex(rawRegex, options);
 		}
 		catch (Exception e)
 		{
@@ -68,7 +91,13 @@ public class Seek
 
 	private static void LogHelp()
 	{
-		Console.WriteLine("Allowed parameters: -r <regex> [-d <directory> -f <filter>]");
+		Console.WriteLine("Allowed parameters: -r <regex> [-d <directory> -f <filter>]\n" +
+			"If need regex options, regex mast be enclosed in / / pair\n" +
+			"For example: /pattern/ie\n" +
+			"Allowed regex options:\n" +
+			"\ti - ignore case;\n" +
+			"\ts - single line, ^ - is start of file, $ - end of file;\n" +
+			"\te - explicit capture");
 	}
 
 	private static string GetArg(string[] args, int i)
