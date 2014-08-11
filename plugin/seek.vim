@@ -12,7 +12,7 @@ function! s:Seek(regex, ...)
 	if (a:0 == 1)
 		let l:filter = a:1
 	endif
-	cexpr system($HOME . '/.vim/bundle/vim-win-seek/seek.exe -r ' . a:regex . ' -f ' . l:filter)
+	cgete system($HOME . '/.vim/bundle/vim-win-seek/seek.exe -r ' . a:regex . ' -f ' . l:filter)
 	copen
 
 	let &efm = old_efm
