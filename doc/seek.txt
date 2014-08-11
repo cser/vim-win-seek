@@ -17,6 +17,10 @@ Search for pattern:
 	:Seek pattern
 Search for pattern with file filter:
 	:Seek pattern *.txt
+Search for word under cursor (with default file filter):
+	:SeekWord
+Change current default file filter:
+	:SeekFilter *.cs
 
 If need regex options, pattern mast be enclosed in / / pair
 For example: /pattern/ie
@@ -27,8 +31,9 @@ Allowed regex options:
 
 Setup default files filter:
 	let g:seek_filter = '*.txt'
-Making shortcut:
+Making shortcuts:
 	map <A-f> :Seek<Space>
+	map <A-F> :SeekWord<br>
 ============================================================
 
 INSTALLATION

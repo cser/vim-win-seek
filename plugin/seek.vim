@@ -19,3 +19,5 @@ function! s:Seek(regex, ...)
 endfunction
 
 :command! -nargs=+ Seek call s:Seek(<f-args>)
+:command! -nargs=0 SeekWord call s:Seek('\b' . expand("<cword>") . '\b')
+:command! -nargs=1 SeekFilter let g:seek_filter = <f-args>
