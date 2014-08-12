@@ -21,6 +21,10 @@ Search for word under cursor (with default file filter):
 	:SeekWord
 Change current default file filter:
 	:SeekFilter *.cs
+Change search directory:
+	:SeekDir src/tests
+Change search directory to cwd
+	:SeekDir
 
 If need regex options, pattern mast be enclosed in / / pair
 For example: /pattern/ie
@@ -31,6 +35,8 @@ Allowed regex options:
 
 Setup default files filter:
 	let g:seek_filter = '*.txt'
+Setup default search directory (if not defined uses cwd):
+	let g:seek_dir = 'src'
 Making shortcuts:
 	map <A-f> :Seek<Space>
 	map <A-F> :SeekWord<br>
