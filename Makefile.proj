@@ -8,6 +8,9 @@
 			EmitDebugInformation="False"
 			LangVersion="Default"
 			OutputAssembly="seek.exe" />
-		<Exec Command="seek.exe -r 'Seek' -f *.txt" />
+		<Exec Command="seek.exe -r Seek -f *.txt" />
+		<Exec Command="seek.exe -r /Seek/ -f *.txt" />
+		<Exec Command="seek.exe -r /Seek/i -f *.txt" />
+		<Exec Command='seek.exe -r "/public class/" -f *.cs' />
 	</Target>
 </Project>

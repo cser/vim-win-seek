@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Collections.Generic;
 
 public class Seek
 {
@@ -53,13 +54,13 @@ public class Seek
 			return;
 		}
 		Regex regex = null;
-		string rawRegex = regexText;
-		RegexOptions options = RegexOptions.CultureInvariant | RegexOptions.Multiline;
-		if (regexText.StartsWith("/") && regexText.LastIndexOf("/") > 1)
+		string pattern = null;
+		if (regexText.Length > 2 && regexText[0] == '/' && regexText.LastIndexOf("/") > 1)
 		{
+			RegexOptions options = RegexOptions.CultureInvariant | RegexOptions.Multiline;
 			int lastIndex = regexText.LastIndexOf("/");
 			string optionsText = regexText.Substring(lastIndex + 1);
-			rawRegex = regexText.Substring(1, lastIndex - 1);
+			string rawRegex = regexText.Substring(1, lastIndex - 1);
 			for (int i = 0; i < optionsText.Length; i++)
 			{
 				char c = optionsText[i];
@@ -76,24 +77,31 @@ public class Seek
 					return;
 				}
 			}
+			try
+			{
+				regex = new Regex(rawRegex, options);
+			}
+			catch (Exception e)
+			{
+				Console.Error.WriteLine("Incorrect regex: " + regexText + " - " + e.Message);
+				return;
+			}
 		}
-		try
+		else
 		{
-			regex = new Regex(rawRegex, options);
+			pattern = regexText;
 		}
-		catch (Exception e)
-		{
-			Console.Error.WriteLine("Incorrect regex: " + regexText + " - " + e.Message);
-			return;
-		}
-		Search(directory, regex, filter);
+		Search(directory, regex, pattern, filter);
 	}
 
 	private static void LogHelp()
 	{
 		Console.WriteLine("Allowed parameters: -r <regex> [-d <directory> -f <filter>]\n" +
-			"If need regex options, regex mast be enclosed in / / pair\n" +
-			"For example: /pattern/ie\n" +
+			"If pattern contains spaces, it mast be enclosed in \" \" pair:\n" +
+			"\t\"some pattern\"\n" +
+			"If pattern is regex, it mast be enclosed in / / pair:\n" +
+			"\t/regex/\n" +
+			"\t/another_regex/ie\n" +
 			"Allowed regex options:\n" +
 			"\ti - ignore case;\n" +
 			"\ts - single line, ^ - is start of file, $ - end of file;\n" +
@@ -105,14 +113,12 @@ public class Seek
 		if (i >= args.Length)
 			return null;
 		string arg = args[i];
-		if (arg.Length > 2 && arg[0] == '\'' && arg[arg.Length - 1] == '\'')
-			return arg.Substring(1, arg.Length - 2);
 		if (arg.Length > 2 && arg[0] == '"' && arg[arg.Length - 1] == '"')
 			return arg.Substring(1, arg.Length - 2);
 		return arg;
 	}
 
-	private static void Search(string directory, Regex regex, string filter)
+	private static void Search(string directory, Regex regex, string pattern, string filter)
 	{
 		StringBuilder builder = new StringBuilder();
 		bool needCutCurrent = false;
@@ -134,20 +140,41 @@ public class Seek
 			return;
 		}
 		string currentDirectory = Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar;
+		List<int> indices = new List<int>();
 		foreach (string file in files)
 		{
 			string text = File.ReadAllText(file);
-			MatchCollection matches = regex.Matches(text);
-			if (matches.Count == 0)
-				continue;
+			indices.Clear();
+			if (regex != null)
+			{
+				MatchCollection matches = regex.Matches(text);
+				if (matches.Count == 0)
+					continue;
+				foreach (Match match in matches)
+				{
+					indices.Add(match.Index);
+				}
+			}
+			else
+			{
+				int index = text.IndexOf(pattern);
+				if (index == -1)
+					continue;
+				while (true)
+				{
+					indices.Add(index);
+					index = text.IndexOf(pattern, index + 1);
+					if (index == -1)
+						break;
+				}
+			}
 			string path = file;
 			if (needCutCurrent && path.StartsWith(currentDirectory))
 				path = file.Substring(currentDirectory.Length);
 			int offset = 0;
 			int currentLineIndex = 0;
-			foreach (Match match in matches)
+			foreach (int index in indices)
 			{
-				int index = match.Index;
 				int lineEnd = -1;
 				while (true)
 				{
