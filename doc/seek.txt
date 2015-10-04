@@ -42,7 +42,7 @@ Setup default search directory (if not defined uses cwd):
 	let g:seek_dir = 'src'
 Making shortcuts:
 	map <A-f> :Seek<Space>
-	map <A-F> :SeekWord<br>
+	map <A-F> :SeekWord<cr>
 ============================================================
 
 INSTALLATION
