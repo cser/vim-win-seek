@@ -1,5 +1,4 @@
 [![Ebert](https://ebertapp.io/github/cser/vim-win-seek.svg)](https://ebertapp.io/github/cser/vim-win-seek)
-
 vim-win-seek
 ============
 
